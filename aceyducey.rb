@@ -108,11 +108,14 @@ puts ""
 puts "You have 100 dollars. Ace is the highest card, 2 is the lowest card."
 puts ""
 
-player_money = 100
+player_money = 100     # keep track of the player's money 
+round = 1              # count the number of rounds that are dealt 
+chicken_count = 0      # we are going to count the number of times they don't bet
 #shuffle the deck (shuffle the array of keys to the card values)
 deck = get_deck
 shuffled_cards = deck.keys.shuffle 
 
+puts "Round " + round.to_s 
 puts "Here are your first two cards:"
 card1 = deck[shuffled_cards[0]]
 card2 = deck[shuffled_cards[1]]
@@ -123,15 +126,16 @@ next_card = 2
 while player_money > 0 && next_card <= 51 # The deck has cards 0 through 51 (52 cards)
   puts "What is your bet?"
   bet = gets.chomp.to_i
+  puts
   if bet > player_money
     puts "You don't have that much money!  No bet."
   elsif bet <= 0 
+    chicken_count = chicken_count + 1
     puts "Chicken!"
   else
     player_card = deck[shuffled_cards[next_card]]
     next_card = next_card + 1
     puts "Your card is: " + pretty_print(player_card)
-    puts
     winner = who_wins(card1, card2, player_card)
     if winner == "player"
       puts "You win!  Lucky bet."
@@ -143,7 +147,10 @@ while player_money > 0 && next_card <= 51 # The deck has cards 0 through 51 (52 
   end
   
   puts "You now have " + player_money.to_s + " dollars."
-  if player_money > 0 && next_card < 50 # we need three cards to play another round if the player has money
+  if player_money > 0 && next_card <= 49 # we need three cards to play another round if the player has money
+    round = round + 1
+    puts 
+    puts "Round " + round.to_s 
     puts "Here are your next two cards:"
     card1 = deck[shuffled_cards[next_card]]
     card2 = deck[shuffled_cards[next_card + 1]]
@@ -151,6 +158,8 @@ while player_money > 0 && next_card <= 51 # The deck has cards 0 through 51 (52 
     next_card = next_card + 2
   elsif player_money == 0
     puts "Money's all gone!"
+  else # The player has money, but we don't have enough cards for another round.  They win!
+    next_card = 52
   end
 
 end
@@ -161,4 +170,5 @@ if player_money == 0
 else
   puts "That was the last round of cards in the deck.  You win!"
 end
-
+puts "Wow, you chickened out " + chicken_count.to_s + " times!" 
+puts
